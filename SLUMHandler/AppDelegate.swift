@@ -12,9 +12,9 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        SLUMServicer.shared.regist("")
+        _ = SLUMServicer.shared.regist("")
             .registAnalytics()
-            .registShare(wechatAppId: "", wechatAppSecret: "")
+            .registShare(wechatAppId: "", wechatAppSecret: "", universalLink: "")
             .registPush(launchOptions)
         return true
     }

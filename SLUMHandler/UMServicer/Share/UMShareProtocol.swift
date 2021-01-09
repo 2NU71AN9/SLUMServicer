@@ -10,7 +10,7 @@ import SLSupportLibrary
 import PKHUD
 
 protocol UMShareProtocol {
-    func registShare(wechatAppId: String, wechatAppSecret: String) -> Self
+    func registShare(wechatAppId: String, wechatAppSecret: String, universalLink: String) -> Self
     
     func shareText(_ text: String, success: (() -> Void)?, failure: (() -> Void)?)
     func shareMiniApp(path: String?, success: (() -> Void)?, failure: (() -> Void)?)
@@ -18,7 +18,7 @@ protocol UMShareProtocol {
 }
 
 extension UMShareProtocol where Self: SLUMServicer {
-    func registShare(wechatAppId: String, wechatAppSecret: String) -> Self {
+    func registShare(wechatAppId: String, wechatAppSecret: String, universalLink: String) -> Self {
         UMSocialGlobal.shareInstance()?.isUsingWaterMark = true // 水印
         UMSocialGlobal.shareInstance()?.isUsingHttpsWhenShareContent = false // 可以分享http图片
         UMSocialGlobal.shareInstance()?.universalLinkDic = [UMSocialPlatformType.wechatSession: universalLink]
@@ -31,7 +31,7 @@ extension UMShareProtocol where Self: SLUMServicer {
         UMSocialManager.default()?.setPlaform(.wechatSession, appKey: wechatAppId, appSecret: wechatAppSecret, redirectURL: "")
         UMSocialManager.default()?.removePlatformProvider(with: .wechatFavorite)
         
-        UMSocialShareUIConfig.shareInstance()?.shareContainerConfig.shareContainerBackgroundColor = ColorBox.text_gray1.color
+        UMSocialShareUIConfig.shareInstance()?.shareContainerConfig.shareContainerBackgroundColor = UIColor(named: "text_gray1")
         UMSocialShareUIConfig.shareInstance()?.shareContainerConfig.isShareContainerHaveGradient = false
         UMSocialShareUIConfig.shareInstance()?.shareContainerConfig.shareContainerCornerRadius = 20
         UMSocialShareUIConfig.shareInstance()?.shareContainerConfig.shareContainerMarginTop = 20
@@ -64,8 +64,8 @@ extension UMShareProtocol where Self: SLUMServicer {
     func shareMiniApp(path: String?, success: (() -> Void)?, failure: (() -> Void)?) {
         let messageObject = UMSocialMessageObject()
         let shareMessage = UMShareMiniProgramObject.shareObject(withTitle: "", descr: "", thumImage: nil) as? UMShareMiniProgramObject
-        shareMessage?.webpageUrl = MiniApp_webpageUrl
-        shareMessage?.userName = MiniApp_userName
+        shareMessage?.webpageUrl = "MiniApp_webpageUrl"
+        shareMessage?.userName = "MiniApp_userName"
         shareMessage?.path = path
         shareMessage?.miniProgramType = .release
         messageObject.shareObject = shareMessage
