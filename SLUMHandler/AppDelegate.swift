@@ -11,10 +11,15 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    var window: UIWindow?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        _ = SLUMServicer.shared.regist("")
+        
+        MobSDK.uploadPrivacyPermissionStatus(true, onResult: nil)
+        
+        _ = SLUMServicer.shared.regist("5fd97b5f498d9e0d4d90761a")
             .registAnalytics()
-            .registShare(wechatAppId: "", wechatAppSecret: "", universalLink: "")
+            .registShare(wechatAppId: "wxac7f360237a214cc", wechatAppSecret: "08196524f27704095dbe7ece0d7dc304", universalLink: "https://bo5k.t4m.cn/myCommProject/")
             .registPush(launchOptions)
         return true
     }

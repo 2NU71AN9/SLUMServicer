@@ -15,4 +15,12 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        SLUMServicer.shared.shareText("分享内容") {
+            
+        } failure: {
+            
+        }
+    }
 }

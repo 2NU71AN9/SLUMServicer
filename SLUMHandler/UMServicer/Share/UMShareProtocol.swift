@@ -22,6 +22,8 @@ extension UMShareProtocol where Self: SLUMServicer {
         UMSocialGlobal.shareInstance()?.isUsingWaterMark = true // 水印
         UMSocialGlobal.shareInstance()?.isUsingHttpsWhenShareContent = false // 可以分享http图片
         UMSocialGlobal.shareInstance()?.universalLinkDic = [UMSocialPlatformType.wechatSession: universalLink]
+        
+        UMSocialManager.default()?.openLog(true)
         /*设置小程序回调app的回调*/
         UMSocialManager.default()?.setLauchFrom(.wechatSession) { (userInfoResponse, _) in
             print("setLauchFromPlatform:userInfoResponse:\(String(describing: userInfoResponse))")
@@ -47,8 +49,7 @@ extension UMShareProtocol where Self: SLUMServicer {
     func shareText(_ text: String, success: (() -> Void)?, failure: (() -> Void)?) {
         UMSocialUIManager.showShareMenuViewInWindow { (platform, _) in
             let messageObject = UMSocialMessageObject()
-            let shareMessage = UMShareObject.shareObject(withTitle: text, descr: nil, thumImage: nil)
-            messageObject.shareObject = shareMessage
+            messageObject.text = text
             UMSocialManager.default()?.share(to: platform, messageObject: messageObject, currentViewController: cur_visible_vc) { (_, error) in
                 if error == nil {
                     HUD.flash(.label("分享成功"), delay: 1.5, completion: nil)

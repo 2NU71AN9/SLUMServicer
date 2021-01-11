@@ -8,6 +8,8 @@ target 'SLUMHandler' do
   #pod 'UMCSecurityPlugins'
   pod 'UMCCommonLog'
   pod 'UMCShare/UI'
+  pod 'UMCShare/Social/WeChat'
   pod 'SLSupportLibrary'
-  
+  pod 'mob_linksdk_pro'
+
 end
