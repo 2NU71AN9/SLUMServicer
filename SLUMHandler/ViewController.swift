@@ -17,10 +17,12 @@ class ViewController: UIViewController {
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        SLUMServicer.shared.shareText("分享内容") {
-            
-        } failure: {
-            
+        let req = SendMessageToWXReq()
+        req.bText = true
+        req.text = "分享的内容"
+        req.scene = Int32(WXSceneSession.rawValue)
+        WXApi.send(req) { (isSuccess) in
+            print("分享结果==>\(isSuccess)")
         }
     }
 }
