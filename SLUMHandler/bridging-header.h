@@ -14,7 +14,7 @@
 //#import <UMSocialWechatHandler.h>
 #import <UShareUI/UShareUI.h>
 #import <UMPush/UMessage.h>
-#import <UMCommonLog/UMCommonLogHeaders.h>
+//#import <UMCommonLog/UMCommonLogHeaders.h>
 #import <UMCommon/MobClick.h>
 
 #import <MOBFoundation/MobSDK+Privacy.h>

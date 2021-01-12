@@ -17,7 +17,7 @@ class SLUMServicer: NSObject, UMAnalyticsProtocol, UMShareProtocol, UMPushProtoc
         UMConfigure.initWithAppkey(appKey, channel: nil)
         #if DEBUG
         UMConfigure.setLogEnabled(true)
-        UMCommonLogManager.setUp()
+//        UMCommonLogManager.setUp()
         #else
         UMConfigure.setLogEnabled(false)
         #endif
