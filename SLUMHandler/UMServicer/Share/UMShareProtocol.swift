@@ -12,14 +12,18 @@ import PKHUD
 protocol UMShareProtocol {
     func registShare(wechatAppId: String, wechatAppSecret: String, universalLink: String) -> Self
     
-    func shareText(_ text: String, success: (() -> Void)?, failure: (() -> Void)?)
-    func shareMiniApp(path: String?, success: (() -> Void)?, failure: (() -> Void)?)
+    func shareText(_ text: String?, complete: ((Bool) -> Void)?)
+    func shareImage(_ image: Any?, complete: ((Bool) -> Void)?)
+    func shareUrl(_ url: String, title: String?, text: String?, image: Any?, complete: ((Bool) -> Void)?)
+    func shareVideo(_ url: String, title: String?, text: String?, image: Any?, complete: ((Bool) -> Void)?)
+    func shareAudio(_ url: String, title: String?, text: String?, image: Any?, complete: ((Bool) -> Void)?)
+    func shareMiniApp(title: String, text: String?, url: String, userName: String, path: String, type: UShareWXMiniProgramType, image: Any?, complete: ((Bool) -> Void)?)
     // 可以添加其他分享内容
 }
 
 extension UMShareProtocol where Self: SLUMServicer {
     func registShare(wechatAppId: String, wechatAppSecret: String, universalLink: String) -> Self {
-        UMSocialGlobal.shareInstance()?.isUsingWaterMark = true // 水印
+        UMSocialGlobal.shareInstance()?.isUsingWaterMark = false // 水印
         UMSocialGlobal.shareInstance()?.isUsingHttpsWhenShareContent = false // 可以分享http图片
         UMSocialGlobal.shareInstance()?.universalLinkDic = [UMSocialPlatformType.wechatSession.rawValue: universalLink]
         
@@ -46,38 +50,87 @@ extension UMShareProtocol where Self: SLUMServicer {
         return self
     }
     
-    func shareText(_ text: String, success: (() -> Void)?, failure: (() -> Void)?) {
+    func shareText(_ text: String?, complete: ((Bool) -> Void)?) {
+        guard let text = text else { return }
         UMSocialUIManager.showShareMenuViewInWindow { (platform, _) in
-            let messageObject = UMSocialMessageObject()
-            messageObject.text = text
-            UMSocialManager.default()?.share(to: platform, messageObject: messageObject, currentViewController: cur_visible_vc) { (_, error) in
-                if error == nil {
-                    HUD.flash(.label("分享成功"), delay: 1.5, completion: nil)
-                    success?()
-                } else {
-                    HUD.flash(.label("分享失败"), delay: 1.5, completion: nil)
-                    failure?()
-                }
+            let message = UMSocialMessageObject()
+            message.text = text
+            UMSocialManager.default()?.share(to: platform, messageObject: message, currentViewController: cur_visible_vc) { (_, error) in
+                HUD.flash(.label(error == nil ? "分享成功" : "分享失败"), delay: 1.5, completion: nil)
+                complete?(error == nil)
             }
         }
     }
-    
-    func shareMiniApp(path: String?, success: (() -> Void)?, failure: (() -> Void)?) {
+    func shareImage(_ image: Any?, complete: ((Bool) -> Void)?) {
+        guard let image = image else { return }
+        UMSocialUIManager.showShareMenuViewInWindow { (platform, _) in
+            let message = UMSocialMessageObject()
+            let object = UMShareImageObject()
+            object.shareImage = image
+            message.shareObject = object
+            UMSocialManager.default()?.share(to: platform, messageObject: message, currentViewController: cur_visible_vc) { (_, error) in
+                HUD.flash(.label(error == nil ? "分享成功" : "分享失败"), delay: 1.5, completion: nil)
+                complete?(error == nil)
+            }
+        }
+    }
+    func shareUrl(_ url: String, title: String?, text: String?, image: Any?, complete: ((Bool) -> Void)?) {
+        UMSocialUIManager.showShareMenuViewInWindow { (platform, _) in
+            let message = UMSocialMessageObject()
+            let object = UMShareWebpageObject()
+            object.webpageUrl = url
+            object.title = title
+            object.descr = text
+            object.thumbImage = image
+            message.shareObject = object
+            UMSocialManager.default()?.share(to: platform, messageObject: message, currentViewController: cur_visible_vc) { (_, error) in
+                HUD.flash(.label(error == nil ? "分享成功" : "分享失败"), delay: 1.5, completion: nil)
+                complete?(error == nil)
+            }
+        }
+    }
+    func shareVideo(_ url: String, title: String?, text: String?, image: Any?, complete: ((Bool) -> Void)?) {
+        UMSocialUIManager.showShareMenuViewInWindow { (platform, _) in
+            let message = UMSocialMessageObject()
+            let object = UMShareVideoObject()
+            object.videoUrl = url
+            object.title = title
+            object.descr = text
+            object.thumbImage = image
+            message.shareObject = object
+            UMSocialManager.default()?.share(to: platform, messageObject: message, currentViewController: cur_visible_vc) { (_, error) in
+                HUD.flash(.label(error == nil ? "分享成功" : "分享失败"), delay: 1.5, completion: nil)
+                complete?(error == nil)
+            }
+        }
+    }
+    func shareAudio(_ url: String, title: String?, text: String?, image: Any?, complete: ((Bool) -> Void)?) {
+        UMSocialUIManager.showShareMenuViewInWindow { (platform, _) in
+            let message = UMSocialMessageObject()
+            let object = UMShareMusicObject()
+            object.musicUrl = url
+            object.title = title
+            object.descr = text
+            object.thumbImage = image
+            message.shareObject = object
+            UMSocialManager.default()?.share(to: platform, messageObject: message, currentViewController: cur_visible_vc) { (_, error) in
+                HUD.flash(.label(error == nil ? "分享成功" : "分享失败"), delay: 1.5, completion: nil)
+                complete?(error == nil)
+            }
+        }
+    }
+    // type 0正式版，1开发版，2体验版。默认0，正式版
+    func shareMiniApp(title: String, text: String?, url: String, userName: String, path: String, type: UShareWXMiniProgramType, image: Any?, complete: ((Bool) -> Void)?) {
         let messageObject = UMSocialMessageObject()
-        let shareMessage = UMShareMiniProgramObject.shareObject(withTitle: "", descr: "", thumImage: nil) as? UMShareMiniProgramObject
-        shareMessage?.webpageUrl = "MiniApp_webpageUrl"
-        shareMessage?.userName = "MiniApp_userName"
+        let shareMessage = UMShareMiniProgramObject.shareObject(withTitle: title, descr: text, thumImage: image) as? UMShareMiniProgramObject
+        shareMessage?.webpageUrl = url
+        shareMessage?.userName = userName
         shareMessage?.path = path
-        shareMessage?.miniProgramType = .release
+        shareMessage?.miniProgramType = type
         messageObject.shareObject = shareMessage
         UMSocialManager.default()?.share(to: .wechatSession, messageObject: messageObject, currentViewController: cur_visible_vc) { (_, error) in
-            if error == nil {
-                HUD.flash(.label("分享成功"), delay: 1.5, completion: nil)
-                success?()
-            } else {
-                HUD.flash(.label("分享失败"), delay: 1.5, completion: nil)
-                failure?()
-            }
+            HUD.flash(.label(error == nil ? "分享成功" : "分享失败"), delay: 1.5, completion: nil)
+            complete?(error == nil)
         }
     }
 }
